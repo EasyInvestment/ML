@@ -68,7 +68,7 @@ class LSTMNetwork(Network):
         label_list = []
         print(">>LSTM Data transpose")
         for i in tqdm(range(len(data) - window_size)):
-            feature_list.append(np.array(data.iloc[i:i+window_size]))
+            feature_list.append(np.array(data[i:i+window_size]))
             label_list.append(np.array(label.iloc[i+window_size - 1]))
         return np.array(feature_list), np.array(label_list)
     def get_network_head(self):
@@ -151,10 +151,10 @@ class ensembleModel:
 
         self.result_label = []
         cnt = 0
-        for i in range(len(self.DNNPredict)):
-            if self.DNNPredict[i] > 1 - threshold:
+        for i in range(len(self.LSTMPredict)):
+            if self.LSTMPredict[i] > 1 - threshold:
                 self.result_label.append(1)
-            elif self.DNNPredict[i] < threshold:
+            elif self.LSTMPredict[i] < threshold:
                 self.result_label.append(0)
             else:
                 self.result_label.append(-1)
@@ -171,3 +171,24 @@ class ensembleModel:
             return 0
         else:
             return round(ck/cnt * 100,2)
+        
+    def predict(self,x):
+        # self.DNNPredict = self.DNNModel.predict(x)
+        # self.LRPredict = self.LRModel.model.predict(x)
+        # self.XGBoostPredict = self.XGBoostModel.model.predict(x)
+        LSTM_x_test, LSTM_y_test = self.LSTMModel.make_dataset(x,pd.DataFrame([i for i in range(len(x))]))
+        self.LSTMPredict = self.LSTMModel.predict(LSTM_x_test)
+
+        # self.DNNPredict = self.DNNPredict.reshape(-1,)
+        # self.LRPredict = self.LRPredict.reshape(-1,)
+        # self.XGBoostPredict = self.XGBoostPredict.reshape(-1,)
+        self.LSTMPredict = list([-1 for i in range(self.num_step)]) + list(self.LSTMPredict.reshape(-1,))
+
+        self.result_label = []
+        for i in range(len(self.LSTMPredict)):
+            if self.LSTMPredict[i] >= 0.5:
+                self.result_label.append(1)
+            elif self.LSTMPredict[i] < 0.5:
+                self.result_label.append(0)
+        
+        return self.result_label

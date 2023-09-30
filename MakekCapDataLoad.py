@@ -4,7 +4,6 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 import pandas as pd
 import pymysql
-import FinanceDataReader as fdr
 import os
 import chromedriver_autoinstall
 from sqlalchemy import create_engine
@@ -255,4 +254,4 @@ def FinanceData():
                 df = stock.get_market_cap(lastDate, today, str(curr_sym[i]))
                 Insert_db_table(df,tabel_name,curr_name)
 
-FinanceData()
+# FinanceData()

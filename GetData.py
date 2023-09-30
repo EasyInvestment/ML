@@ -1,5 +1,6 @@
 import pymysql
 import pandas as pd
+import FinanceDataReader as fdr
 
 def connect_db(database):
     host = "investment.cu24cf6ah5lb.us-west-1.rds.amazonaws.com"
@@ -35,3 +36,31 @@ def dataAll(database,table):
     con.close()
 
     return df
+
+def getTableName(database):
+    con = connect_db(database)
+    # 커서 생성
+    cursor = con.cursor()
+
+    # 테이블 목록 조회
+    cursor.execute("SHOW TABLES")
+
+    # 결과 가져오기
+    tables = cursor.fetchall()
+    tables = [table[0] for table in tables]
+    cursor.close()
+    con.close()
+
+    return tables
+
+# 카테고리의 주식 이름 목록 반환
+def getStockList(name):
+    # 한국거래소 상장종목 전체
+    df_krx = fdr.StockListing('KRX')
+    table = getTableName(name)
+    table = [i.replace("s","") for i in table]
+    curr_sym = []
+    for i in range(len(table)):
+        curr_sym.append(df_krx[df_krx["Symbol"] == table[i]]["Name"].values[0])
+    
+    return curr_sym
