@@ -62,4 +62,4 @@ def stockData():
         for i in range(len(curr_sym)):
             df = fdr.DataReader(curr_sym[i])
             df.to_csv("stockData/"+curr_name+"/"+curr_sym[i]+".csv")
-stockData()
+# stockData()

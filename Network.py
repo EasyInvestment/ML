@@ -127,26 +127,26 @@ class ensembleModel:
         self.LRModel = LogisticNetwork(input_dim = input_dim)
         self.XGBoostModel = Xgboost(input_dim = input_dim)
     def models_fit(self,x,y):
-        print(">> DNN Training...")
-        self.DNNModel.train_on_batch(x,y)
-        print(">> Logistic Training...")
-        self.LRModel.train_on_batch(x,y)
-        print(">> XGBoost Training...")
-        self.XGBoostModel.train_on_batch(x,y)
+        # print(">> DNN Training...")
+        # self.DNNModel.train_on_batch(x,y)
+        # print(">> Logistic Training...")
+        # self.LRModel.train_on_batch(x,y)
+        # print(">> XGBoost Training...")
+        # self.XGBoostModel.train_on_batch(x,y)
         print(">> LSTM Training...")
         self.LSTMModel.train_on_batch(x,y)
     #  0 <= threshold < 0.5
     def predict_and_evaluation(self,x_test,y_test, threshold = 0.2):
 
-        self.DNNPredict = self.DNNModel.predict(x_test)
-        self.LRPredict = self.LRModel.model.predict(x_test)
-        self.XGBoostPredict = self.XGBoostModel.model.predict(x_test)
+        # self.DNNPredict = self.DNNModel.predict(x_test)
+        # self.LRPredict = self.LRModel.model.predict(x_test)
+        # self.XGBoostPredict = self.XGBoostModel.model.predict(x_test)
         LSTM_x_test, LSTM_y_test = self.LSTMModel.make_dataset(x_test,y_test)
         self.LSTMPredict = self.LSTMModel.predict(LSTM_x_test)
 
-        self.DNNPredict = self.DNNPredict.reshape(-1,)
-        self.LRPredict = self.LRPredict.reshape(-1,)
-        self.XGBoostPredict = self.XGBoostPredict.reshape(-1,)
+        # self.DNNPredict = self.DNNPredict.reshape(-1,)
+        # self.LRPredict = self.LRPredict.reshape(-1,)
+        # self.XGBoostPredict = self.XGBoostPredict.reshape(-1,)
         self.LSTMPredict = list([-1 for i in range(self.num_step)]) + list(self.LSTMPredict.reshape(-1,))
 
         self.result_label = []

@@ -1,7 +1,8 @@
 import pymysql
 import pandas as pd
 import FinanceDataReader as fdr
-
+from pykrx import stock
+from datetime import datetime
 def connect_db(database):
     host = "investment.cu24cf6ah5lb.us-west-1.rds.amazonaws.com"
     port = 3306
@@ -64,3 +65,36 @@ def getStockList(name):
         curr_sym.append(df_krx[df_krx["Symbol"] == table[i]]["Name"].values[0])
     
     return curr_sym
+
+def subData(symbol):
+    today = str(datetime.now())[:10].replace("-","")
+    df = stock.get_market_fundamental(today, today, "005930")
+    col = list(df.columns)
+    dic = {}
+    for name in col:
+        dic[name] = df[name].values[0]
+
+    return dic
+
+def ChatGptData(name):
+    df_krx = fdr.StockListing('KRX')
+    table = getTableName(name)
+    table = [i.replace("s","") for i in table]
+    curr_category = name
+    name = []
+    sym = []
+    for i in range(len(table)):
+        sym.append(df_krx[df_krx["Symbol"] == table[i]]["Symbol"].values[0])
+        name.append(df_krx[df_krx["Symbol"] == table[i]]["Name"].values[0])
+    
+    result = {}
+    for i in range(len(sym)):
+
+        curr_name = name[i]
+        curr_sym = sym[i]
+        temp = subData(curr_sym)
+
+        result[name] = temp
+
+    return result
+

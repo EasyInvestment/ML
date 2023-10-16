@@ -68,4 +68,4 @@ def FinanceData():
             df = stock.get_market_cap("20000101", "20230731", str(curr_sym[i]))
             df.to_csv("data/"+curr_name+"/"+curr_sym[i]+".csv")
 
-FinanceData()
+# FinanceData()
