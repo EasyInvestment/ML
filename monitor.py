@@ -3,7 +3,8 @@ from GetData import dataAll
 from Network import ensembleModel
 from dataIndicator import *
 from sklearn.preprocessing import StandardScaler
-def monitor(category,stockName,LabelingValue = 120,seq_len = 20,offset = True):
+def monitor(category =None,stockName = None,LabelingValue = 120,seq_len = 20,offset = True):
+    return pd.read_csv("labeled_data_BTC_USDT_1h_70.csv",index_col=0)
     # 데이터 업데이트
     # FinanceData()
 
