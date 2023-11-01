@@ -28,10 +28,10 @@ def chrome_driver():
     return driver
 
 def getDatabaseName():
-    host = "investment.cu24cf6ah5lb.us-west-1.rds.amazonaws.com"
+    host = "127.0.0.1"
     port = 3306
-    username = "someone555"
-    password = "12345asdfg"
+    username = "root"
+    password = "825582qaz"
     con = pymysql.connect(
         host=host,
         user=username,
@@ -85,11 +85,11 @@ def getLastDate(database,table):
     return str(last_row[-1])[:10]
 
 def connect_db(database):
-    host = "investment.cu24cf6ah5lb.us-west-1.rds.amazonaws.com"
+    host = "127.0.0.1"
     port = 3306
-    username = "someone555"
+    username = "root"
     database = database
-    password = "12345asdfg"
+    password = "825582qaz"
     try:
         con = pymysql.connect(host=host, user=username, password=password,
                 db=database, charset='utf8') # 한글처리 (charset = 'utf8')
@@ -99,10 +99,10 @@ def connect_db(database):
 
     return con
 def connect():
-    host = "investment.cu24cf6ah5lb.us-west-1.rds.amazonaws.com"
+    host = "127.0.0.1"
     port = 3306
-    username = "someone555"
-    password = "12345asdfg"
+    username = "root"
+    password = "825582qaz"
     try:
         con = pymysql.connect(host=host, user=username, password=password, charset='utf8') # 한글처리 (charset = 'utf8')
     except Exception as e:
@@ -169,7 +169,7 @@ def Create_db_table(name,database_name):
 
 def Insert_db_table(df,name,database_name):
     try:
-        db_connection_str = "mysql+pymysql://someone555:12345asdfg@investment.cu24cf6ah5lb.us-west-1.rds.amazonaws.com/"+database_name
+        db_connection_str = "mysql+pymysql://root:825582qaz@127.0.0.1/"+database_name
         db_connection = create_engine(db_connection_str)
         conn = db_connection.connect()
     except Exception as e:
@@ -197,19 +197,20 @@ def Insert_db_table(df,name,database_name):
 def FinanceData():
     # 카테고리 수집
     # driver = webdriver.Chrome(ChromeDriverManager(version="114.0.5735.90").install())
-    driver = chrome_driver()
+    # driver = chrome_driver()
+    driver = webdriver.Chrome()
     driver.get("https://finance.naver.com/sise/sise_group.naver?type=upjong")
 
     sector = driver.find_elements(By.CSS_SELECTOR,"#contentarea_left > table > tbody > tr > td > a")
     sector_url = [curr.get_attribute("href") for curr in sector]
-    sector_name = [curr.text for curr in sector]
+    sector_name = [curr.text.replace(",","") for curr in sector]
 
     # 주식 카테고리 별 이름 데이터
     category = []
     for i in range(len(sector_url)):
         driver.get(sector_url[i])
         sectorDetail = driver.find_elements(By.CSS_SELECTOR, "#contentarea > div:nth-child(5) > table > tbody > tr > td.name")
-        companyName = [curr.text.replace("*","").replace(" ","") for curr in sectorDetail]
+        companyName = [curr.text.replace("*","").replace(" ","").replace(",","") for curr in sectorDetail]
 
         category.append(companyName)
 
@@ -226,7 +227,7 @@ def FinanceData():
         curr_sym = []
         for i in range(1,len(curr_category)):
             try:
-                curr_sym.append(df_krx[df_krx["Name"] == curr_category[i]]["Symbol"].values[0])
+                curr_sym.append(df_krx[df_krx["Name"] == curr_category[i]]["Code"].values[0])
             except:
                 pass
         curr_name = curr_name + "M"
@@ -254,4 +255,4 @@ def FinanceData():
                 df = stock.get_market_cap(lastDate, today, str(curr_sym[i]))
                 Insert_db_table(df,tabel_name,curr_name)
 
-# FinanceData()
+FinanceData()

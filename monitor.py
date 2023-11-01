@@ -1,10 +1,19 @@
-from StockDataLoad import FinanceData
+# from StockDataLoad import FinanceData
 from GetData import dataAll
 from Network import ensembleModel
 from dataIndicator import *
 from sklearn.preprocessing import StandardScaler
+
+def make_dataset(data, label, window_size=20):
+    feature_list = []
+    label_list = []
+    for i in range(len(data) - window_size):
+        feature_list.append(np.array(data[i:i+window_size]))
+        label_list.append(np.array(label.iloc[i+window_size - 1]))
+    return np.array(feature_list), np.array(label_list)
+
 def monitor(category =None,stockName = None,LabelingValue = 120,seq_len = 20,offset = True):
-    return pd.read_csv("labeled_data_BTC_USDT_1h_70.csv",index_col=0)
+    # return pd.read_csv("labeled_data_BTC_USDT_1h_70.csv",index_col=0)
     # 데이터 업데이트
     # FinanceData()
 
@@ -62,5 +71,7 @@ def monitor(category =None,stockName = None,LabelingValue = 120,seq_len = 20,off
             else:
                 result.append(1)
         print(classification_report(result,y_test.tolist()))
+        x_test,_ = make_dataset(x_test,y_test)
+        return model.LSTMModel.predict(x_test)
     else:
         model.predict(offset)

@@ -8,6 +8,7 @@ import tensorflow as tf
 from tqdm import tqdm
 from sklearn.linear_model import LogisticRegression
 from xgboost import XGBClassifier
+from keras.callbacks import EarlyStopping
 # from Indicator import *
 # from DataScaler import *
 
@@ -86,7 +87,8 @@ class LSTMNetwork(Network):
 
     def train_on_batch(self, x, y):
         x,y = self.make_dataset(x,y)
-        self.model.fit(x, y, batch_size = 1024, epochs = 100)
+        early_stopping = EarlyStopping(monitor="val_loss",patience=5,restore_best_weights=True)
+        self.model.fit(x, y, batch_size = 16, epochs = 20,validation_split=0.2)
 
     def predict(self, x):
         pred = self.model.predict(x)

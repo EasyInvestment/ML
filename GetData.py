@@ -4,11 +4,11 @@ import FinanceDataReader as fdr
 from pykrx import stock
 from datetime import datetime
 def connect_db(database):
-    host = "investment.cu24cf6ah5lb.us-west-1.rds.amazonaws.com"
+    host = "financedata.cyyrt9e5hsme.ap-northeast-2.rds.amazonaws.com"
     port = 3306
-    username = "someone555"
+    username = "root"
     database = database
-    password = "12345asdfg"
+    password = "825582qaz"
     try:
         con = pymysql.connect(host=host, user=username, password=password,
                 db=database, charset='utf8') # 한글처리 (charset = 'utf8')
