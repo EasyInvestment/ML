@@ -24,5 +24,6 @@ def main():
     df = df.sort_values(["pred"])
     print(df["name"].iloc[-4:].to_numpy().tolist())
     # return df.iloc[-4:].to_numpy().tolist()
+    return(df["name"].iloc[-4:].to_numpy().tolist())
 
 main()
